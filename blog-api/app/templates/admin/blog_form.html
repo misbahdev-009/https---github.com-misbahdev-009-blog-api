@@ -1,0 +1,25 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ 'Edit blog' if blog and blog.id else 'Write a blog' }}{% endblock %}
+{% block content %}
+{% set editing = blog and blog.id %}
+<div class="topbar"><h1>{{ 'Edit blog' if editing else 'Write a blog' }}</h1><a class="btn btn-ghost" href="/admin">Back to all blogs</a></div>
+{% if error %}<div class="alert error" role="alert">{{ error }}</div>{% endif %}
+<form method="post" action="{{ '/admin/blogs/' ~ blog.id ~ '/edit' if editing else '/admin/blogs/new' }}">
+<div class="two">
+  <div class="panel">
+    <div class="field"><label for="title">Title</label><input id="title" name="title" required minlength="3" maxlength="150" value="{{ blog.title if blog }}"></div>
+    <div class="field"><label for="excerpt">Short summary</label><input id="excerpt" name="excerpt" maxlength="300" value="{{ blog.excerpt if blog }}"><div class="hint">Shown on blog cards. Leave empty to use the first lines of the post.</div></div>
+    <div class="field"><label for="content">Content</label><textarea id="content" name="content" required minlength="10">{{ blog.content if blog }}</textarea><div class="hint">Markdown works: # headings, **bold**, - lists, &gt; quotes and fenced code.</div></div>
+  </div>
+  <div class="panel">
+    <div class="field"><label for="category">Category</label>
+      <select id="category" name="category"><option value="">No category</option>
+        {% for c in categories %}<option value="{{ c.name }}" {{ 'selected' if blog and blog.category == c.name }}>{{ c.name }}</option>{% endfor %}
+      </select></div>
+    <div class="field"><label for="tags">Tags</label><input id="tags" name="tags" placeholder="python, fastapi, mongodb" value="{{ blog.tags|join(', ') if blog and blog.tags }}"><div class="hint">Separate tags with commas.</div></div>
+    <div class="field"><label class="check"><input type="checkbox" name="published" value="true" {{ 'checked' if (not blog) or blog.published }}> Publish on the site</label><div class="hint">Untick to save as a draft.</div></div>
+    <button class="btn" type="submit" style="width:100%">{{ 'Save changes' if editing else 'Publish blog' }}</button>
+  </div>
+</div>
+</form>
+{% endblock %}

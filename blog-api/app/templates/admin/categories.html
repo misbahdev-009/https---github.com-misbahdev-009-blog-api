@@ -1,0 +1,30 @@
+{% extends "admin/base.html" %}
+{% block title %}Categories{% endblock %}
+{% block content %}
+<div class="topbar"><h1>Categories</h1></div>
+<div class="two">
+  <div class="panel">
+    {% for c in categories %}
+    <form class="cat-row" method="post" action="/admin/categories/{{ c.id }}/edit" style="padding:.7rem 0;border-bottom:1px solid var(--line)">
+      <input name="name" value="{{ c.name }}" required minlength="2" aria-label="Category name">
+      <input name="description" value="{{ c.description }}" placeholder="Description" aria-label="Description">
+      <div class="actions">
+        <button class="btn btn-ghost btn-sm" type="submit">Save</button>
+        <button class="btn btn-danger btn-sm" type="submit" formaction="/admin/categories/{{ c.id }}/delete" formnovalidate onclick="return confirm('Delete this category? Its blogs will become uncategorised.')">Delete</button>
+      </div>
+      <div class="hint" style="grid-column:1/-1;margin:0">{{ c.count }} blog{{ '' if c.count == 1 else 's' }}</div>
+    </form>
+    {% else %}
+    <p style="color:var(--muted);text-align:center;padding:2rem">No categories yet. Add your first one on the right.</p>
+    {% endfor %}
+  </div>
+  <div class="panel">
+    <h3 style="font:700 1.1rem var(--display);margin:0 0 1rem">Add a category</h3>
+    <form method="post" action="/admin/categories">
+      <div class="field"><label for="name">Name</label><input id="name" name="name" required minlength="2" maxlength="40"></div>
+      <div class="field"><label for="description">Description</label><input id="description" name="description" maxlength="200"></div>
+      <button class="btn" type="submit" style="width:100%">Add category</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}{{ post.title }} | Quillnote{% endblock %}
+{% block content %}
+<article class="article">
+  <a class="back" href="/">Back to all posts</a>
+  {% if post.category %}<div style="margin-top:1.4rem"><a class="pill" href="/?category={{ post.category|urlencode }}">{{ post.category }}</a></div>{% endif %}
+  <h1>{{ post.title }}</h1>
+  <div class="byline">
+    <div class="avatar">{{ post.author_name[0]|upper }}</div>
+    <div><b>{{ post.author_name }}</b><div class="meta"><span>{{ post.created_at|date }}</span><span>{{ post.content|read_time }} min read</span><span>{{ post.views }} view{{ '' if post.views == 1 else 's' }}</span></div></div>
+  </div>
+  <div class="prose">{{ post.content|md }}</div>
+  {% if post.tags %}<div class="tags">{% for t in post.tags %}<a class="tag" href="/?tag={{ t|urlencode }}">#{{ t }}</a>{% endfor %}</div>{% endif %}
+</article>
+{% if related %}
+<section class="section" style="padding-top:1rem"><div class="wrap">
+  <div class="section-head"><h2>More in {{ post.category }}</h2></div>
+  <div class="grid">
+    {% for p in related %}
+    <a class="card" href="/blog/{{ p.slug }}">
+      <div class="cover" style="--h:{{ (p.title|length * 47) % 360 }}" aria-hidden="true">{{ p.title[0]|upper }}</div>
+      <div class="card-body"><h3>{{ p.title }}</h3><p>{{ p.excerpt }}</p><div class="meta"><span>{{ p.created_at|date }}</span></div></div>
+    </a>
+    {% endfor %}
+  </div>
+</div></section>
+{% endif %}
+{% endblock %}

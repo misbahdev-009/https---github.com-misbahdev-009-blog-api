@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Quillnote | Read and search blogs{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="wrap">
+    <h1>Find the post you need.</h1>
+    <p class="lead">Search every published story by title, narrow it down by category, or jump straight to a topic with a tag.</p>
+    <form class="searchbar" method="get" action="/" role="search">
+      <input type="search" name="title" value="{{ title_q }}" placeholder="Search by title" aria-label="Search by title">
+      <select name="category" aria-label="Category">
+        <option value="">All categories</option>
+        {% for c in categories %}<option value="{{ c.name }}" {{ 'selected' if c.name|lower == category_q|lower }}>{{ c.name }}</option>{% endfor %}
+      </select>
+      {% if tag_q %}<input type="hidden" name="tag" value="{{ tag_q }}">{% endif %}
+      <button class="btn btn-lemon" type="submit">Search</button>
+    </form>
+    {% if top_tags %}
+    <div class="chips">
+      <span class="lbl">Popular tags</span>
+      {% for t in top_tags %}<a class="chip {{ 'on' if t == tag_q }}" href="/?tag={{ t|urlencode }}">#{{ t }}</a>{% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<main class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>{% if base_qs %}Search results{% else %}Latest posts{% endif %}</h2>
+      <span class="count">{{ total }} post{{ '' if total == 1 else 's' }}{% if base_qs %} found. <a href="/" style="color:var(--blue);font-weight:600">Clear filters</a>{% endif %}</span>
+    </div>
+    <div class="grid">
+      {% for p in items %}
+      {% set hue = (p.title|length * 47) % 360 %}
+      <a class="card {{ 'featured' if loop.first and not base_qs and page == 1 }}" href="/blog/{{ p.slug }}">
+        <div class="cover" style="--h:{{ hue }}" aria-hidden="true">{{ p.title[0]|upper }}</div>
+        <div class="card-body">
+          {% if p.category %}<span class="pill">{{ p.category }}</span>{% endif %}
+          <h3>{{ p.title }}</h3>
+          <p>{{ p.excerpt }}</p>
+          <div class="meta"><span>{{ p.author_name }}</span><span>{{ p.created_at|date }}</span><span>{{ p.content|read_time }} min read</span></div>
+        </div>
+      </a>
+      {% else %}
+      <div class="empty">
+        <h3>No posts match your search</h3>
+        <p style="color:var(--muted)">Try a shorter title, another category or a different tag.</p>
+        <a class="btn" href="/">Show all posts</a>
+      </div>
+      {% endfor %}
+    </div>
+    {% if pages > 1 %}
+    <div class="pager">
+      {% if page > 1 %}<a class="btn btn-ghost btn-sm" href="/?{{ base_qs }}&page={{ page - 1 }}">Previous</a>{% endif %}
+      <span>Page {{ page }} of {{ pages }}</span>
+      {% if page < pages %}<a class="btn btn-ghost btn-sm" href="/?{{ base_qs }}&page={{ page + 1 }}">Next</a>{% endif %}
+    </div>
+    {% endif %}
+  </div>
+</main>
+{% endblock %}

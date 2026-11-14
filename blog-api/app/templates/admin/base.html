@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>{% block title %}Admin{% endblock %} | Quillnote</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}"></head>
+<body><div class="admin">
+<aside class="side">
+  <a class="brand" href="/admin"><i></i>Quillnote</a>
+  <nav>
+    <a href="/admin" class="{{ 'on' if active == 'blogs' }}">All blogs</a>
+    <a href="/admin/blogs/new" class="{{ 'on' if active == 'new' }}">Write a blog</a>
+    <a href="/admin/categories" class="{{ 'on' if active == 'categories' }}">Categories</a>
+    <a href="/" target="_blank" rel="noopener">View site</a>
+    <a href="/docs" target="_blank" rel="noopener">API docs</a>
+  </nav>
+  <div class="who"><b>{{ admin.name }}</b>{{ admin.email }}<br><a href="/admin/logout" style="color:var(--lemon);font-weight:600">Log out</a></div>
+</aside>
+<main class="main">
+  {% if request.query_params.get('msg') %}<div class="alert {{ request.query_params.get('kind', 'success') }}" role="status">{{ request.query_params.get('msg') }}</div>{% endif %}
+  {% block content %}{% endblock %}
+</main></div></body></html>
